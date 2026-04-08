@@ -54,11 +54,10 @@ textarea{min-height:50px}
 .doc .subtitle{font-size:7pt;text-align:center;color:#64748b;font-style:italic;margin-bottom:2px;letter-spacing:.3px}
 .doc .ref-line{font-size:6.5pt;text-align:center;color:#475569;border-top:1px solid #cbd5e1;border-bottom:1px solid #cbd5e1;padding:3px 6px;margin:4px 0 10px;background:#f8fafc;letter-spacing:.2px}
 
-.doc h2{font-size:10pt;color:#fff;background:linear-gradient(90deg,#0c4a6e,#075985);padding:6px 12px;margin:12px 0 8px;border-radius:3px;letter-spacing:.5px;page-break-after:avoid;break-after:avoid}
-.doc .section{page-break-inside:avoid;break-inside:avoid;margin-bottom:6px}
+.doc h2{font-size:10pt;color:#fff;background:linear-gradient(90deg,#0c4a6e,#075985);padding:6px 12px;margin:10px 0 6px;border-radius:3px;letter-spacing:.5px;page-break-after:avoid;break-after:avoid}
+.doc .section{page-break-inside:avoid;break-inside:avoid;margin-bottom:4px;display:block}
 .doc .section table{page-break-inside:avoid;break-inside:avoid}
 .doc .section .row{page-break-inside:avoid;break-inside:avoid}
-/* Only fishbone and signatures get forced to their own page */
 .doc .fishbone-page{page-break-before:always;break-before:page;page-break-inside:avoid;break-inside:avoid}
 .doc .sig-page{page-break-before:always;break-before:page;page-break-inside:avoid;break-inside:avoid}
 .doc h3{font-size:9.5pt;color:#0c4a6e;font-weight:700;border-bottom:1.5px solid #0ea5e9;padding:4px 0;margin:12px 0 6px;text-transform:uppercase;letter-spacing:.3px}
@@ -82,12 +81,11 @@ textarea{min-height:50px}
 .doc .fishbone{margin:8px auto;background:#ffffff;border:none;padding:0;text-align:center;page-break-inside:avoid;break-inside:avoid;max-width:580px;width:100%}
 .doc .fishbone svg{max-width:100%;width:100%;height:auto;display:block;margin:0 auto}
 
-.doc .sig-tbl{margin-top:4px}
-.doc .sig-tbl td{padding:8px 10px;vertical-align:top;width:50%}
-.doc .sig-tbl .lbl{font-size:7.5pt;color:#0c4a6e;font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
-.doc .sig-tbl .nm{font-weight:700;font-size:9.5pt;color:#1a2332;margin-bottom:2px;border-bottom:1px solid #cbd5e1;padding-bottom:3px}
-.doc .sig-tbl .rl{font-size:7.5pt;color:#64748b;font-style:italic;margin-bottom:6px}
-.doc .sig-tbl .sg{font-size:7pt;color:#94a3b8;margin-top:3px}
+.doc .sig-tbl{margin-top:2px}
+.doc .sig-tbl td{padding:6px 8px;vertical-align:top;width:50%;height:40px}
+.doc .sig-tbl .lbl{font-size:7pt;color:#0c4a6e;font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px}
+.doc .sig-tbl .nm{font-weight:700;font-size:9pt;color:#1a2332;margin-bottom:2px;border-bottom:1px solid #cbd5e1;padding-bottom:2px;min-height:12pt}
+.doc .sig-tbl .rl{font-size:7pt;color:#64748b;font-style:italic}
 
 .doc .footer{text-align:center;font-size:7pt;color:#94a3b8;margin-top:18px;padding-top:8px;border-top:1px solid #e2e8f0}
 
@@ -428,22 +426,25 @@ h+='<tr><td>Diagnosis</td><td colspan="3">'+cc+'</td></tr>';
 h+='<tr><td>Ownership</td><td>'+V("own")+'</td><td>Severity (NCC MERP)</td><td><b>'+sv.l+'</b></td></tr></table>';
 
 h+='<div class="section"><h2>SECTION 1 · EVENT DESCRIPTION</h2>';
-h+='<div class="row"><b>Event Description</b><span>'+ev+'</span></div>';
-h+='<div class="row"><b>Date / Time / Shift</b><span>'+fD(V("iD"))+', '+(V("iT")||"N/A")+'H, '+V("sh")+' shift</span></div>';
-h+='<div class="row"><b>Location (SPSC)</b><span>'+ward+'</span></div>';
-h+='<div class="row"><b>Personnel Involved</b><span>'+ward+' Physician, Pharmacy, Nursing staff</span></div>';
-h+='<div class="row"><b>Reporting Channel</b><span>OVR system + SPSC portal per MOH/MSPP/0007/01</span></div>';
+h+='<table style="font-size:8.5pt"><tr><th style="width:28%">Item</th><th>Details</th></tr>';
+h+='<tr><td><b>Event Description</b></td><td>'+ev+'</td></tr>';
+h+='<tr><td><b>Date / Time / Shift</b></td><td>'+fD(V("iD"))+', '+(V("iT")||"N/A")+'H, '+V("sh")+' shift</td></tr>';
+h+='<tr><td><b>Location (SPSC)</b></td><td>'+ward+'</td></tr>';
+h+='<tr><td><b>Personnel Involved</b></td><td>'+ward+' Physician, Pharmacy, Nursing staff</td></tr>';
+h+='<tr><td><b>Reporting Channel</b></td><td>OVR system + SPSC portal per MOH/MSPP/0007/01</td></tr></table>';
 
 h+='</div><div class="section"><h2>SECTION 2 · CAUSAL FACTORS ANALYSIS</h2>';
-h+='<div class="row"><b>Contributing Factors</b><span>(1) Knowledge deficit re: '+t.l.toLowerCase()+' and CBAHI '+t.c+'; (2) Cognitive overload from high patient volume; (3) Communication barriers; (4) Behavioral normalization of deviations; (5) System pressure creating time constraints</span></div>';
-h+='<div class="row"><b>Training Adequacy</b><span>'+t.l+' prevention not embedded in current CME framework</span></div>';
-h+='<div class="row"><b>Competence Gap</b><span>Identified in '+t.l.toLowerCase()+' prevention competencies</span></div>';
-h+='<div class="row"><b>Communication</b><span>SBAR not consistently used between disciplines</span></div>';
+h+='<table style="font-size:8.5pt"><tr><th style="width:28%">Factor</th><th>Finding</th></tr>';
+h+='<tr><td><b>Contributing Factors</b></td><td>(1) Knowledge deficit re: '+t.l.toLowerCase()+' and CBAHI '+t.c+'; (2) Cognitive overload; (3) Communication barriers; (4) Behavioral normalization; (5) System pressure</td></tr>';
+h+='<tr><td><b>Training Adequacy</b></td><td>'+t.l+' prevention not embedded in current CME framework</td></tr>';
+h+='<tr><td><b>Competence Gap</b></td><td>Identified in '+t.l.toLowerCase()+' prevention competencies</td></tr>';
+h+='<tr><td><b>Communication</b></td><td>SBAR not consistently used between disciplines</td></tr></table>';
 
 h+='</div><div class="section"><h2>SECTION 3 · PROCESS &amp; SYSTEMS REVIEW</h2>';
-h+='<div class="row"><b>Process Failure</b><span>Critical failure identified at the '+stage.toLowerCase()+' step. Defense-in-depth approach (Swiss Cheese Model) recommended</span></div>';
-h+='<div class="row"><b>Technology Gap</b><span>Absence of CPOE, BCMA, and eMAR systems. Strategic technology investment recommended</span></div>';
-h+='<div class="row"><b>Policy Compliance</b><span>CBAHI standard '+t.c+' exists; implementation gap identified; no systematic audit program in place</span></div>';
+h+='<table style="font-size:8.5pt"><tr><th style="width:28%">Area</th><th>Assessment</th></tr>';
+h+='<tr><td><b>Process Failure</b></td><td>Critical failure at '+stage.toLowerCase()+' step; defense-in-depth (Swiss Cheese Model) recommended</td></tr>';
+h+='<tr><td><b>Technology Gap</b></td><td>Absence of CPOE, BCMA, eMAR; strategic investment recommended</td></tr>';
+h+='<tr><td><b>Policy Compliance</b></td><td>CBAHI '+t.c+' exists; implementation gap; no systematic audit program</td></tr></table>';
 
 h+='</div><div class="section"><h2>SECTION 4 &middot; FIVE WHYS ANALYSIS</h2>';
 h+='<table><tr><th style="width:60px">Level</th><th>Question</th><th>Finding</th></tr>';
@@ -526,25 +527,25 @@ h+='<h2>SECTION 10 &middot; ISHIKAWA FISHBONE DIAGRAM</h2>';
 h+='<div class="fishbone">'+buildFishbone(t)+'</div>';
 
 h+='</div><div class="section sig-page"><h2>SECTION 11 &middot; LESSONS LEARNED &amp; FOLLOW-UP</h2>';
-h+='<table><tr><th style="width:22%">Aspect</th><th>Finding</th></tr>';
-h+='<tr><td><b>Key Lesson</b></td><td>This incident highlights the critical importance of defense-in-depth strategies in medication safety. A single point of failure at the '+stage.toLowerCase()+' stage had the potential to compromise patient safety, emphasizing the need for multiple verification layers.</td></tr>';
-h+='<tr><td><b>System Insight</b></td><td>The absence of automated safeguards ('+t.ft.join(", ")+') created conditions where human error could propagate through the medication use process without interception.</td></tr>';
-h+='<tr><td><b>Cultural Factor</b></td><td>Non-punitive reporting culture must be reinforced to ensure continued incident disclosure and organizational learning.</td></tr>';
-h+='<tr><td><b>Institutional Learning</b></td><td>Findings will be disseminated through the Pharmacy &amp; Therapeutics Committee and incorporated into orientation programs.</td></tr>';
-h+='<tr><td><b>Follow-up Review</b></td><td>A follow-up effectiveness review will be conducted 90 days after CAPA implementation.</td></tr>';
-h+='<tr><td><b>Effectiveness Measures</b></td><td>(1) Repeat incident rate; (2) Staff competency scores; (3) Audit compliance rate; (4) Time to CAPA completion; (5) Staff safety culture survey results.</td></tr>';
+h+='<table style="font-size:8pt"><tr><th style="width:24%">Aspect</th><th>Finding</th></tr>';
+h+='<tr><td><b>Key Lesson</b></td><td>Defense-in-depth strategies are critical; a single failure at the '+stage.toLowerCase()+' stage can compromise patient safety.</td></tr>';
+h+='<tr><td><b>System Insight</b></td><td>Absence of automated safeguards ('+t.ft.join(", ")+') allowed human error to propagate without interception.</td></tr>';
+h+='<tr><td><b>Cultural Factor</b></td><td>Non-punitive reporting culture must be reinforced for continued incident disclosure and organizational learning.</td></tr>';
+h+='<tr><td><b>Institutional Learning</b></td><td>Findings disseminated via PT&amp;C Committee and incorporated into orientation programs.</td></tr>';
+h+='<tr><td><b>Follow-up Review</b></td><td>Effectiveness review at 90 days post-CAPA implementation.</td></tr>';
+h+='<tr><td><b>Effectiveness KPIs</b></td><td>(1) Repeat rate; (2) Competency scores; (3) Audit compliance; (4) CAPA completion time; (5) Safety culture survey.</td></tr>';
 h+='</table>';
 
 h+='</div><div class="section"><h2>SECTION 12 &middot; AUTHORIZATION &amp; SIGNATURES</h2>';
 h+='<table class="sig-tbl"><tr>';
-h+='<td><div class="lbl">Prepared by</div><div class="nm">'+(V("s1")||"_______________")+'</div><div class="rl">'+(V("s1r")||"Title / Position")+'</div><div class="sg">Signature: _______________</div></td>';
-h+='<td><div class="lbl">Reviewed by</div><div class="nm">'+(V("s2")||"_______________")+'</div><div class="rl">Pharmacy Manager</div><div class="sg">Signature: _______________</div></td>';
+h+='<td><div class="lbl">Prepared by</div><div class="nm">'+(V("s1")||"_______________")+'</div><div class="rl">'+(V("s1r")||"Title / Position")+'</div></td>';
+h+='<td><div class="lbl">Reviewed by</div><div class="nm">'+(V("s2")||"_______________")+'</div><div class="rl">Pharmacy Manager</div></td>';
 h+='</tr><tr>';
-h+='<td><div class="lbl">Quality Coordinator</div><div class="nm">'+(V("s3")||"_______________")+'</div><div class="rl">Quality Management Dept.</div><div class="sg">Signature: _______________</div></td>';
-h+='<td><div class="lbl">Director, Quality Management</div><div class="nm">'+(V("s4")||"_______________")+'</div><div class="rl">Quality Director</div><div class="sg">Signature: _______________</div></td>';
+h+='<td><div class="lbl">Quality Coordinator</div><div class="nm">'+(V("s3")||"_______________")+'</div><div class="rl">Quality Management Dept.</div></td>';
+h+='<td><div class="lbl">Director, QM</div><div class="nm">'+(V("s4")||"_______________")+'</div><div class="rl">Quality Director</div></td>';
 h+='</tr><tr>';
-h+='<td style="background:#f0f9ff"><div class="lbl" style="color:#0c4a6e">Final Approval</div><div class="nm">'+(V("s5")||"_______________")+'</div><div class="rl">Medical Director</div><div class="sg">Signature: _______________</div></td>';
-h+='<td style="background:#f0f9ff"><div class="lbl" style="color:#0c4a6e">Chairman, PT&amp;C Committee</div><div class="nm">'+(V("s5")||"_______________")+'</div><div class="rl">Pharmacy &amp; Therapeutics Committee</div><div class="sg">Signature: _______________</div></td>';
+h+='<td style="background:#f0f9ff"><div class="lbl" style="color:#0c4a6e">Final Approval</div><div class="nm">'+(V("s5")||"_______________")+'</div><div class="rl">Medical Director</div></td>';
+h+='<td style="background:#f0f9ff"><div class="lbl" style="color:#0c4a6e">Chairman</div><div class="nm">'+(V("s5")||"_______________")+'</div><div class="rl">PT&amp;C Committee</div></td>';
 h+='</tr></table>';
 
 h+='</div><div class="footer">'+hosp+' &middot; Aseer Health Cluster &middot; Medication Safety Program &middot; CONFIDENTIAL DOCUMENT &middot; Generated '+fD(V("dC"))+'</div>';
@@ -571,7 +572,7 @@ filename:"RCA_"+mrn+".pdf",
 image:{type:"jpeg",quality:0.98},
 html2canvas:{scale:2,useCORS:true,letterRendering:true,scrollY:0,windowWidth:794,allowTaint:true,backgroundColor:"#ffffff"},
 jsPDF:{unit:"mm",format:"a4",orientation:"portrait",compress:true},
-pagebreak:{mode:["css","legacy"],before:[".fishbone-page",".sig-page"],avoid:[".fishbone",".sev-box",".cap-box",".row","h2","h3","tr"]}
+pagebreak:{mode:["avoid-all","css","legacy"],before:[".fishbone-page",".sig-page"],avoid:[".section",".fishbone",".sev-box",".cap-box"]}
 };
 html2pdf().set(opt).from(element).save().then(function(){
 btn.textContent="✓ Downloaded!";
