@@ -57,6 +57,7 @@ textarea{min-height:50px}
 .doc .section .row{page-break-inside:avoid;break-inside:avoid}
 /* Only fishbone and signatures get forced to their own page */
 .doc .fishbone-page{page-break-before:always;break-before:page;page-break-inside:avoid;break-inside:avoid}
+.doc .sig-page{page-break-before:always;break-before:page;page-break-inside:avoid;break-inside:avoid}
 .doc h3{font-size:9.5pt;color:#0c4a6e;font-weight:700;border-bottom:1.5px solid #0ea5e9;padding:4px 0;margin:12px 0 6px;text-transform:uppercase;letter-spacing:.3px}
 
 .doc table{width:100%;border-collapse:collapse;margin:6px 0;font-size:8.5pt}
@@ -517,13 +518,15 @@ h+='</div><div class="section fishbone-page">';
 h+='<h2>SECTION 10 &middot; ISHIKAWA FISHBONE DIAGRAM</h2>';
 h+='<div class="fishbone">'+buildFishbone(t)+'</div>';
 
-h+='</div><div class="section"><h2>SECTION 11 &middot; LESSONS LEARNED &amp; FOLLOW-UP</h2>';
-h+='<div class="row"><b>Key Lesson</b><span>This incident highlights the critical importance of defense-in-depth strategies in medication safety. A single point of failure at the '+stage.toLowerCase()+' stage had the potential to compromise patient safety, emphasizing the need for multiple verification layers.</span></div>';
-h+='<div class="row"><b>System Insight</b><span>The absence of automated safeguards ('+t.ft.join(", ")+') created conditions where human error could propagate through the medication use process without interception.</span></div>';
-h+='<div class="row"><b>Cultural Factor</b><span>Non-punitive reporting culture must be reinforced to ensure continued incident disclosure and organizational learning. Staff should view this RCA as an opportunity for system improvement, not individual blame.</span></div>';
-h+='<div class="row"><b>Institutional Learning</b><span>Findings will be disseminated through the Pharmacy &amp; Therapeutics Committee, Medication Safety Subcommittee, and incorporated into departmental orientation programs.</span></div>';
-h+='<div class="row"><b>Follow-up Review</b><span>A follow-up effectiveness review will be conducted 90 days after CAPA implementation to assess sustainability and measure outcome indicators.</span></div>';
-h+='<div class="row"><b>Effectiveness Measures</b><span>(1) Repeat incident rate; (2) Staff competency scores; (3) Audit compliance rate; (4) Time to CAPA completion; (5) Staff safety culture survey results.</span></div>';
+h+='</div><div class="section sig-page"><h2>SECTION 11 &middot; LESSONS LEARNED &amp; FOLLOW-UP</h2>';
+h+='<table><tr><th style="width:22%">Aspect</th><th>Finding</th></tr>';
+h+='<tr><td><b>Key Lesson</b></td><td>This incident highlights the critical importance of defense-in-depth strategies in medication safety. A single point of failure at the '+stage.toLowerCase()+' stage had the potential to compromise patient safety, emphasizing the need for multiple verification layers.</td></tr>';
+h+='<tr><td><b>System Insight</b></td><td>The absence of automated safeguards ('+t.ft.join(", ")+') created conditions where human error could propagate through the medication use process without interception.</td></tr>';
+h+='<tr><td><b>Cultural Factor</b></td><td>Non-punitive reporting culture must be reinforced to ensure continued incident disclosure and organizational learning.</td></tr>';
+h+='<tr><td><b>Institutional Learning</b></td><td>Findings will be disseminated through the Pharmacy &amp; Therapeutics Committee and incorporated into orientation programs.</td></tr>';
+h+='<tr><td><b>Follow-up Review</b></td><td>A follow-up effectiveness review will be conducted 90 days after CAPA implementation.</td></tr>';
+h+='<tr><td><b>Effectiveness Measures</b></td><td>(1) Repeat incident rate; (2) Staff competency scores; (3) Audit compliance rate; (4) Time to CAPA completion; (5) Staff safety culture survey results.</td></tr>';
+h+='</table>';
 
 h+='</div><div class="section"><h2>SECTION 12 &middot; AUTHORIZATION &amp; SIGNATURES</h2>';
 h+='<table class="sig-tbl"><tr><td><b>Prepared by</b><div class="name">'+(V("s1")||"___________")+'</div><div class="role">'+(V("s1r")||"Title")+'</div></td><td><b>Reviewed by</b><div class="name">'+(V("s2")||"___________")+'</div><div class="role">Pharmacy Manager</div></td></tr>';
@@ -554,7 +557,7 @@ filename:"RCA_"+mrn+".pdf",
 image:{type:"jpeg",quality:0.98},
 html2canvas:{scale:2,useCORS:true,letterRendering:true,scrollY:0,windowWidth:794,allowTaint:true,backgroundColor:"#ffffff"},
 jsPDF:{unit:"mm",format:"a4",orientation:"portrait",compress:true},
-pagebreak:{mode:["css","legacy"],before:".fishbone-page",avoid:[".section","table","tr",".fishbone",".sev-box",".cap-box",".row","h2","h3"]}
+pagebreak:{mode:["css","legacy"],before:[".fishbone-page",".sig-page"],avoid:[".section","table","tr",".fishbone",".sev-box",".cap-box",".row","h2","h3"]}
 };
 html2pdf().set(opt).from(element).save().then(function(){
 btn.textContent="✓ Downloaded!";
