@@ -51,11 +51,12 @@ textarea{min-height:50px}
 .doc .subtitle{font-size:7pt;text-align:center;color:#64748b;font-style:italic;margin-bottom:2px;letter-spacing:.3px}
 .doc .ref-line{font-size:6.5pt;text-align:center;color:#475569;border-top:1px solid #cbd5e1;border-bottom:1px solid #cbd5e1;padding:3px 6px;margin:4px 0 10px;background:#f8fafc;letter-spacing:.2px}
 
-.doc h2{font-size:10pt;color:#fff;background:linear-gradient(90deg,#0c4a6e,#075985);padding:6px 12px;margin:0 0 8px;border-radius:3px;letter-spacing:.5px;page-break-after:avoid;break-after:avoid}
-.doc .section{page-break-before:always;break-before:page;page-break-inside:avoid;break-inside:avoid;padding-top:8px}
-.doc .section:first-of-type{page-break-before:auto;break-before:auto;padding-top:0}
+.doc h2{font-size:10pt;color:#fff;background:linear-gradient(90deg,#0c4a6e,#075985);padding:6px 12px;margin:12px 0 8px;border-radius:3px;letter-spacing:.5px;page-break-after:avoid;break-after:avoid}
+.doc .section{page-break-inside:avoid;break-inside:avoid;margin-bottom:6px}
 .doc .section table{page-break-inside:avoid;break-inside:avoid}
 .doc .section .row{page-break-inside:avoid;break-inside:avoid}
+/* Only fishbone and signatures get forced to their own page */
+.doc .fishbone-page{page-break-before:always;break-before:page;page-break-inside:avoid;break-inside:avoid}
 .doc h3{font-size:9.5pt;color:#0c4a6e;font-weight:700;border-bottom:1.5px solid #0ea5e9;padding:4px 0;margin:12px 0 6px;text-transform:uppercase;letter-spacing:.3px}
 
 .doc table{width:100%;border-collapse:collapse;margin:6px 0;font-size:8.5pt}
@@ -553,7 +554,7 @@ filename:"RCA_"+mrn+".pdf",
 image:{type:"jpeg",quality:0.98},
 html2canvas:{scale:2,useCORS:true,letterRendering:true,scrollY:0,windowWidth:794,allowTaint:true,backgroundColor:"#ffffff"},
 jsPDF:{unit:"mm",format:"a4",orientation:"portrait",compress:true},
-pagebreak:{mode:["css","legacy"],before:".section",avoid:["table","tr",".fishbone",".sev-box",".cap-box",".row"]}
+pagebreak:{mode:["css","legacy"],before:".fishbone-page",avoid:[".section","table","tr",".fishbone",".sev-box",".cap-box",".row","h2","h3"]}
 };
 html2pdf().set(opt).from(element).save().then(function(){
 btn.textContent="✓ Downloaded!";
