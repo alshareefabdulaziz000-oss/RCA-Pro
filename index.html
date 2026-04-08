@@ -19,6 +19,9 @@ input,select,textarea{width:100%;padding:9px;border:1.5px solid #e2e8f0;border-r
 textarea{min-height:50px}
 .sr{display:grid;grid-template-columns:110px 1fr;gap:6px;margin-bottom:5px;align-items:center}
 .sr span{font-size:11px;color:#64748b;font-weight:600}
+.sig-field{margin-bottom:10px}
+.sig-field label{display:block;font-size:11px;font-weight:600;color:#0c4a6e;margin-bottom:3px}
+.sig-field input{width:100%;padding:9px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;background:#f8fafc;font-family:inherit}
 .capa-opt{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#1e293b;line-height:1.4;padding:8px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;cursor:pointer}
 .capa-opt:hover{background:#f1f5f9;border-color:#0ea5e9}
 .capa-opt input{margin-top:2px;flex-shrink:0;accent-color:#0c4a6e;width:16px;height:16px}
@@ -79,10 +82,12 @@ textarea{min-height:50px}
 .doc .fishbone{margin:8px auto;background:#ffffff;border:none;padding:0;text-align:center;page-break-inside:avoid;break-inside:avoid;max-width:580px;width:100%}
 .doc .fishbone svg{max-width:100%;width:100%;height:auto;display:block;margin:0 auto}
 
-.doc .sig-tbl td{padding:10px 8px;font-size:8.5pt;height:42px;vertical-align:top}
-.doc .sig-tbl td b{display:block;font-size:8pt;color:#0c4a6e;margin-bottom:8px}
-.doc .sig-tbl td .name{font-weight:700;font-size:9pt}
-.doc .sig-tbl td .role{font-size:7.5pt;color:#64748b;font-style:italic}
+.doc .sig-tbl{margin-top:4px}
+.doc .sig-tbl td{padding:8px 10px;vertical-align:top;width:50%}
+.doc .sig-tbl .lbl{font-size:7.5pt;color:#0c4a6e;font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
+.doc .sig-tbl .nm{font-weight:700;font-size:9.5pt;color:#1a2332;margin-bottom:2px;border-bottom:1px solid #cbd5e1;padding-bottom:3px}
+.doc .sig-tbl .rl{font-size:7.5pt;color:#64748b;font-style:italic;margin-bottom:6px}
+.doc .sig-tbl .sg{font-size:7pt;color:#94a3b8;margin-top:3px}
 
 .doc .footer{text-align:center;font-size:7pt;color:#94a3b8;margin-top:18px;padding-top:8px;border-top:1px solid #e2e8f0}
 
@@ -179,13 +184,15 @@ body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 <div class="r rf"><div><label>Category</label><select id="sev"><option value="0">Category A - Capacity to cause error</option><option value="1">Category B - Did not reach patient</option><option value="2">Category C - Reached patient, no harm</option><option value="3">Category D - Required monitoring</option><option value="4">Category E - Temporary harm</option><option value="5">Category F - Hospitalization</option><option value="6">Category G - Permanent harm</option><option value="7">Category H - Life-sustaining</option><option value="8">Category I - Death</option></select></div></div>
 <div class="r rf"><div><label>Responsible</label><input id="resp" value="Medical Director"></div></div></div>
 
-<div class="c"><div class="ct">Signatures</div>
-<div class="sr"><span>Prepared by:</span><input id="s1"></div>
-<div class="sr"><span>Title:</span><input id="s1r"></div>
-<div class="sr"><span>Pharm Mgr:</span><input id="s2"></div>
-<div class="sr"><span>Quality:</span><input id="s3"></div>
-<div class="sr"><span>Dir QM:</span><input id="s4"></div>
-<div class="sr"><span>Med Dir:</span><input id="s5"></div></div>
+<div class="c"><div class="ct">Authorization &amp; Signatures</div>
+<label style="font-size:11px;color:#64748b;margin-bottom:8px;display:block">Enter the full name of each signatory:</label>
+<div class="sig-field"><label>Prepared by (Name)</label><input id="s1" placeholder="e.g., Abdulaziz Alhazmi"></div>
+<div class="sig-field"><label>Prepared by (Title / Position)</label><input id="s1r" placeholder="e.g., Clinical Pharmacist, MSO"></div>
+<div class="sig-field"><label>Reviewed by — Pharmacy Manager</label><input id="s2" placeholder="Full name of Pharmacy Manager"></div>
+<div class="sig-field"><label>Quality Coordinator</label><input id="s3" placeholder="Full name of Quality Coordinator"></div>
+<div class="sig-field"><label>Director of Quality Management</label><input id="s4" placeholder="Full name of Director QM"></div>
+<div class="sig-field"><label>Medical Director (Final Approver)</label><input id="s5" placeholder="Full name of Medical Director"></div>
+</div>
 
 <button class="btn" id="gB" type="button">Generate Professional RCA Report</button>
 
@@ -529,9 +536,16 @@ h+='<tr><td><b>Effectiveness Measures</b></td><td>(1) Repeat incident rate; (2) 
 h+='</table>';
 
 h+='</div><div class="section"><h2>SECTION 12 &middot; AUTHORIZATION &amp; SIGNATURES</h2>';
-h+='<table class="sig-tbl"><tr><td><b>Prepared by</b><div class="name">'+(V("s1")||"___________")+'</div><div class="role">'+(V("s1r")||"Title")+'</div></td><td><b>Reviewed by</b><div class="name">'+(V("s2")||"___________")+'</div><div class="role">Pharmacy Manager</div></td></tr>';
-h+='<tr><td><b>Quality Coordinator</b><div class="name">'+(V("s3")||"___________")+'</div><div class="role">Quality Management</div></td><td><b>Director, QM</b><div class="name">'+(V("s4")||"___________")+'</div><div class="role">Quality Director</div></td></tr>';
-h+='<tr><td style="background:#f0f9ff"><b>Approved by</b><div class="name">'+(V("s5")||"___________")+'</div><div class="role">Medical Director</div></td><td style="background:#f0f9ff"><b>Chairman</b><div class="name">'+(V("s5")||"___________")+'</div><div class="role">Pharmacy &amp; Therapeutics Committee</div></td></tr></table>';
+h+='<table class="sig-tbl"><tr>';
+h+='<td><div class="lbl">Prepared by</div><div class="nm">'+(V("s1")||"_______________")+'</div><div class="rl">'+(V("s1r")||"Title / Position")+'</div><div class="sg">Signature: _______________</div></td>';
+h+='<td><div class="lbl">Reviewed by</div><div class="nm">'+(V("s2")||"_______________")+'</div><div class="rl">Pharmacy Manager</div><div class="sg">Signature: _______________</div></td>';
+h+='</tr><tr>';
+h+='<td><div class="lbl">Quality Coordinator</div><div class="nm">'+(V("s3")||"_______________")+'</div><div class="rl">Quality Management Dept.</div><div class="sg">Signature: _______________</div></td>';
+h+='<td><div class="lbl">Director, Quality Management</div><div class="nm">'+(V("s4")||"_______________")+'</div><div class="rl">Quality Director</div><div class="sg">Signature: _______________</div></td>';
+h+='</tr><tr>';
+h+='<td style="background:#f0f9ff"><div class="lbl" style="color:#0c4a6e">Final Approval</div><div class="nm">'+(V("s5")||"_______________")+'</div><div class="rl">Medical Director</div><div class="sg">Signature: _______________</div></td>';
+h+='<td style="background:#f0f9ff"><div class="lbl" style="color:#0c4a6e">Chairman, PT&amp;C Committee</div><div class="nm">'+(V("s5")||"_______________")+'</div><div class="rl">Pharmacy &amp; Therapeutics Committee</div><div class="sg">Signature: _______________</div></td>';
+h+='</tr></table>';
 
 h+='</div><div class="footer">'+hosp+' &middot; Aseer Health Cluster &middot; Medication Safety Program &middot; CONFIDENTIAL DOCUMENT &middot; Generated '+fD(V("dC"))+'</div>';
 h+='</div>';
@@ -557,7 +571,7 @@ filename:"RCA_"+mrn+".pdf",
 image:{type:"jpeg",quality:0.98},
 html2canvas:{scale:2,useCORS:true,letterRendering:true,scrollY:0,windowWidth:794,allowTaint:true,backgroundColor:"#ffffff"},
 jsPDF:{unit:"mm",format:"a4",orientation:"portrait",compress:true},
-pagebreak:{mode:["css","legacy"],before:[".fishbone-page",".sig-page"],avoid:[".section","table","tr",".fishbone",".sev-box",".cap-box",".row","h2","h3"]}
+pagebreak:{mode:["css","legacy"],before:[".fishbone-page",".sig-page"],avoid:[".fishbone",".sev-box",".cap-box",".row","h2","h3","tr"]}
 };
 html2pdf().set(opt).from(element).save().then(function(){
 btn.textContent="✓ Downloaded!";
