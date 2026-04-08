@@ -51,7 +51,11 @@ textarea{min-height:50px}
 .doc .subtitle{font-size:7pt;text-align:center;color:#64748b;font-style:italic;margin-bottom:2px;letter-spacing:.3px}
 .doc .ref-line{font-size:6.5pt;text-align:center;color:#475569;border-top:1px solid #cbd5e1;border-bottom:1px solid #cbd5e1;padding:3px 6px;margin:4px 0 10px;background:#f8fafc;letter-spacing:.2px}
 
-.doc h2{font-size:10pt;color:#fff;background:linear-gradient(90deg,#0c4a6e,#075985);padding:6px 12px;margin:14px 0 8px;border-radius:3px;letter-spacing:.5px}
+.doc h2{font-size:10pt;color:#fff;background:linear-gradient(90deg,#0c4a6e,#075985);padding:6px 12px;margin:0 0 8px;border-radius:3px;letter-spacing:.5px;page-break-after:avoid;break-after:avoid}
+.doc .section{page-break-before:always;break-before:page;page-break-inside:avoid;break-inside:avoid;padding-top:8px}
+.doc .section:first-of-type{page-break-before:auto;break-before:auto;padding-top:0}
+.doc .section table{page-break-inside:avoid;break-inside:avoid}
+.doc .section .row{page-break-inside:avoid;break-inside:avoid}
 .doc h3{font-size:9.5pt;color:#0c4a6e;font-weight:700;border-bottom:1.5px solid #0ea5e9;padding:4px 0;margin:12px 0 6px;text-transform:uppercase;letter-spacing:.3px}
 
 .doc table{width:100%;border-collapse:collapse;margin:6px 0;font-size:8.5pt}
@@ -70,8 +74,8 @@ textarea{min-height:50px}
 .doc .cap-box{background:#fefce8;border-left:4px solid #ca8a04;padding:8px 12px;margin:6px 0;font-size:8.5pt}
 
 .doc .fishbone-page{page-break-before:always;break-before:page;page-break-inside:avoid;break-inside:avoid;padding-top:10px}
-.doc .fishbone{margin:8px 0;background:#ffffff;border:none;padding:0;text-align:center;page-break-inside:avoid;break-inside:avoid}
-.doc .fishbone svg{max-width:100%;height:auto;display:inline-block}
+.doc .fishbone{margin:8px auto;background:#ffffff;border:none;padding:0;text-align:center;page-break-inside:avoid;break-inside:avoid;max-width:580px;width:100%}
+.doc .fishbone svg{max-width:100%;width:100%;height:auto;display:block;margin:0 auto}
 
 .doc .sig-tbl td{padding:14px 8px;font-size:8.5pt;height:50px}
 .doc .sig-tbl td b{display:block;font-size:8pt;color:#0c4a6e;margin-bottom:8px}
@@ -154,7 +158,7 @@ body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 <label class="capa-opt"><input type="checkbox" value="workflow_redesign"> Redesign of workflow with verification checkpoints within 30 days</label>
 <label class="capa-opt"><input type="checkbox" value="double_check"> Implement mandatory independent double-check for high-risk steps</label>
 <label class="capa-opt"><input type="checkbox" value="cpoe_bcma"> Escalate CPOE/BCMA/eMAR technology investment request to administration</label>
-<label class="capa-opt"><input type="checkbox" value="monthly_audit"> Monthly compliance audit program with results reported to PT&C</label>
+<label class="capa-opt"><input type="checkbox" value="monthly_audit"> Monthly compliance audit program with results reported to PT&amp;C</label>
 <label class="capa-opt"><input type="checkbox" value="safety_huddle"> Daily safety huddles in the affected department for 30 days</label>
 <label class="capa-opt"><input type="checkbox" value="staff_memo"> Formal memorandum distributed to all department staff within 72 hours</label>
 <label class="capa-opt"><input type="checkbox" value="spsc_report"> SPSC portal incident reporting completed per MOH/MSPP/0007/01</label>
@@ -164,6 +168,8 @@ body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 <label class="capa-opt"><input type="checkbox" value="policy_review"> Review and update of departmental policy and procedures</label>
 <label class="capa-opt"><input type="checkbox" value="kpi_tracking"> Establish KPI tracking for this error type with monthly reporting</label>
 <label class="capa-opt"><input type="checkbox" value="patient_disclosure"> Patient and family disclosure conducted per disclosure policy</label>
+<label class="capa-opt" style="border-color:#f59e0b;background:#fffbeb"><input type="checkbox" id="capaOtherChk" value="other"> <b>Other (specify below)</b></label>
+<textarea id="capaOtherText" placeholder="Type custom corrective action(s)... (one per line)" style="display:none;min-height:70px;margin-top:4px;padding:8px;border:1.5px solid #f59e0b;border-radius:6px;font-size:12px;background:#fffbeb;font-family:inherit;width:100%;resize:vertical"></textarea>
 </div>
 </div>
 
@@ -262,102 +268,109 @@ function V(id){return document.getElementById(id).value.trim()}
 function fD(d){if(!d)return"";var x=new Date(d);var m=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return m[x.getMonth()]+" "+x.getDate()+", "+x.getFullYear()}
 
 function buildFishbone(t){
-// Polished A4 fishbone - 740x440 with balanced layout
-var W=740,H=440;
-var cy=H/2+10;
-var pad=20;
-var headW=150,headH=80;
+// Compact fishbone - labels fully visible within viewBox
+var W=560,H=360;
+var cy=H/2+6;
+var pad=12;
+// Shift everything RIGHT so left labels have room
+var leftOffset=110;  // extra room for left-side category labels
+var headW=105,headH=58;
 var headX=W-headW-pad;
-var spineStart=pad+15;
-var spineEnd=headX-5;
+var spineStart=leftOffset;
+var spineEnd=headX-6;
 
-var s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" font-family="Arial,Helvetica,sans-serif" style="width:100%;height:auto;display:block">';
+var s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" font-family="Arial,Helvetica,sans-serif" preserveAspectRatio="xMidYMid meet" style="width:100%;max-width:560px;height:auto;display:block;margin:0 auto">';
 
-// Defs: gradients and shadows
 s+='<defs>';
-s+='<linearGradient id="spineGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#075985"/><stop offset="100%" stop-color="#0c4a6e"/></linearGradient>';
-s+='<linearGradient id="headGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#dc2626"/><stop offset="100%" stop-color="#991b1b"/></linearGradient>';
-s+='<linearGradient id="catGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#075985"/></linearGradient>';
-s+='<filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/><feOffset dx="1" dy="1" result="offsetblur"/><feComponentTransfer><feFuncA type="linear" slope="0.3"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>';
+s+='<linearGradient id="spineG" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#0c4a6e"/></linearGradient>';
+s+='<linearGradient id="headG" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ef4444"/><stop offset="100%" stop-color="#991b1b"/></linearGradient>';
+s+='<linearGradient id="manG" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1e40af"/></linearGradient>';
+s+='<linearGradient id="metG" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#065f46"/></linearGradient>';
+s+='<linearGradient id="matG" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#b45309"/></linearGradient>';
+s+='<linearGradient id="envG" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#5b21b6"/></linearGradient>';
+s+='<marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><polygon points="0 0, 10 3, 0 6" fill="#0c4a6e"/></marker>';
+s+='<marker id="arrBlue" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#1e40af"/></marker>';
+s+='<marker id="arrGreen" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#065f46"/></marker>';
+s+='<marker id="arrOrange" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#b45309"/></marker>';
+s+='<marker id="arrPurple" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#5b21b6"/></marker>';
 s+='</defs>';
 
-// Background
-s+='<rect width="'+W+'" height="'+H+'" fill="#fafbfc"/>';
-// Border with rounded corners
-s+='<rect x="3" y="3" width="'+(W-6)+'" height="'+(H-6)+'" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" rx="6"/>';
+s+='<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>';
+s+='<rect x="2" y="2" width="'+(W-4)+'" height="'+(H-4)+'" fill="none" stroke="#0c4a6e" stroke-width="1.2" rx="5"/>';
 
-// Header banner
-s+='<rect x="3" y="3" width="'+(W-6)+'" height="32" fill="url(#spineGrad)" rx="6"/>';
-s+='<rect x="3" y="20" width="'+(W-6)+'" height="15" fill="url(#spineGrad)"/>';
-s+='<text x="'+(W/2)+'" y="24" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="700" letter-spacing="1">ISHIKAWA CAUSE-AND-EFFECT DIAGRAM</text>';
+// Header
+s+='<rect x="2" y="2" width="'+(W-4)+'" height="22" fill="url(#spineG)" rx="5"/>';
+s+='<rect x="2" y="14" width="'+(W-4)+'" height="10" fill="url(#spineG)"/>';
+s+='<text x="'+(W/2)+'" y="16" text-anchor="middle" fill="#ffffff" font-size="9.5" font-weight="800" letter-spacing="0.8">ISHIKAWA CAUSE-AND-EFFECT DIAGRAM</text>';
 
-// Main spine (thick gradient)
-s+='<line x1="'+spineStart+'" y1="'+cy+'" x2="'+spineEnd+'" y2="'+cy+'" stroke="url(#spineGrad)" stroke-width="6" stroke-linecap="round" filter="url(#shadow)"/>';
-// Arrow head
-s+='<polygon points="'+spineEnd+','+(cy-12)+' '+spineEnd+','+(cy+12)+' '+(spineEnd+14)+','+cy+'" fill="#0c4a6e"/>';
+// Spine
+s+='<line x1="'+spineStart+'" y1="'+cy+'" x2="'+(spineEnd-8)+'" y2="'+cy+'" stroke="#0c4a6e" stroke-width="5" stroke-linecap="round" marker-end="url(#arr)"/>';
 
-// Problem head box (right) with gradient and shadow
-s+='<rect x="'+headX+'" y="'+(cy-headH/2)+'" width="'+headW+'" height="'+headH+'" rx="10" fill="url(#headGrad)" stroke="#7f1d1d" stroke-width="2" filter="url(#shadow)"/>';
-s+='<text x="'+(headX+headW/2)+'" y="'+(cy-15)+'" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="700">MEDICATION</text>';
-s+='<text x="'+(headX+headW/2)+'" y="'+cy+'" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="700">ERROR</text>';
-s+='<line x1="'+(headX+20)+'" y1="'+(cy+8)+'" x2="'+(headX+headW-20)+'" y2="'+(cy+8)+'" stroke="#fca5a5" stroke-width="0.8"/>';
-s+='<text x="'+(headX+headW/2)+'" y="'+(cy+22)+'" text-anchor="middle" fill="#fecaca" font-size="9" font-style="italic">'+t.l+'</text>';
+// Head
+s+='<rect x="'+(headX+2)+'" y="'+(cy-headH/2+2)+'" width="'+headW+'" height="'+headH+'" rx="6" fill="#7f1d1d" opacity="0.25"/>';
+s+='<rect x="'+headX+'" y="'+(cy-headH/2)+'" width="'+headW+'" height="'+headH+'" rx="6" fill="url(#headG)" stroke="#7f1d1d" stroke-width="1.5"/>';
+s+='<text x="'+(headX+headW/2)+'" y="'+(cy-9)+'" text-anchor="middle" fill="#ffffff" font-size="9.5" font-weight="800">MEDICATION</text>';
+s+='<text x="'+(headX+headW/2)+'" y="'+(cy+2)+'" text-anchor="middle" fill="#ffffff" font-size="9.5" font-weight="800">ERROR</text>';
+s+='<line x1="'+(headX+12)+'" y1="'+(cy+7)+'" x2="'+(headX+headW-12)+'" y2="'+(cy+7)+'" stroke="#fecaca" stroke-width="0.8"/>';
+s+='<text x="'+(headX+headW/2)+'" y="'+(cy+17)+'" text-anchor="middle" fill="#fecaca" font-size="7" font-weight="600" font-style="italic">'+t.l+'</text>';
 
-// 4 categories with balanced spacing
-var spineLen=spineEnd-spineStart;
+var spineLen=spineEnd-spineStart-20;
 var cats=[
-{n:"MANPOWER",sub:"People",items:t.fh,pos:0.32,top:true},
-{n:"METHOD",sub:"Process",items:t.fm,pos:0.66,top:true},
-{n:"MATERIAL",sub:"Equipment",items:t.ft,pos:0.32,top:false},
-{n:"ENVIRONMENT",sub:"Workplace",items:t.fe,pos:0.66,top:false}
+{n:"MANPOWER",sub:"People",items:t.fh,pos:0.30,top:true,grad:"manG",color:"#1e40af",marker:"arrBlue"},
+{n:"METHOD",sub:"Process",items:t.fm,pos:0.68,top:true,grad:"metG",color:"#065f46",marker:"arrGreen"},
+{n:"MATERIAL",sub:"Equipment",items:t.ft,pos:0.30,top:false,grad:"matG",color:"#b45309",marker:"arrOrange"},
+{n:"ENVIRONMENT",sub:"Workplace",items:t.fe,pos:0.68,top:false,grad:"envG",color:"#5b21b6",marker:"arrPurple"}
 ];
 
 for(var i=0;i<cats.length;i++){
 var c=cats[i];
 var attachX=spineStart+spineLen*c.pos;
 var attachY=cy;
-// Branch end positioned within drawing area
-var labelY=c.top?70:H-50;
-var branchEndX=attachX-105;
+var labelY=c.top?52:H-48;
+// Shorter branch so label stays within bounds
+var branchEndX=attachX-75;
 var branchEndY=labelY;
 
-// Thick diagonal branch
-s+='<line x1="'+attachX+'" y1="'+attachY+'" x2="'+branchEndX+'" y2="'+branchEndY+'" stroke="#0c4a6e" stroke-width="3" stroke-linecap="round"/>';
-// White outline behind branch for clarity
-s+='<line x1="'+attachX+'" y1="'+attachY+'" x2="'+branchEndX+'" y2="'+branchEndY+'" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" stroke-dasharray="2,3" opacity="0.4"/>';
+// Branch line with arrow
+s+='<line x1="'+branchEndX+'" y1="'+branchEndY+'" x2="'+(attachX-3)+'" y2="'+(attachY-(c.top?-1:1))+'" stroke="'+c.color+'" stroke-width="3" stroke-linecap="round" marker-end="url(#'+c.marker+')"/>';
 
-// Category label box - larger, more prominent
-var lblW=120,lblH=30;
+// Category label
+var lblW=92,lblH=22;
 var lblX=branchEndX-lblW;
 var lblY=branchEndY-lblH/2;
-s+='<rect x="'+lblX+'" y="'+lblY+'" width="'+lblW+'" height="'+lblH+'" rx="5" fill="url(#catGrad)" stroke="#0c4a6e" stroke-width="1.5" filter="url(#shadow)"/>';
-s+='<text x="'+(lblX+lblW/2)+'" y="'+(branchEndY-2)+'" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="700" letter-spacing="0.5">'+c.n+'</text>';
-s+='<text x="'+(lblX+lblW/2)+'" y="'+(branchEndY+10)+'" text-anchor="middle" fill="#bae6fd" font-size="7" font-style="italic">('+c.sub+')</text>';
+// Ensure label stays within viewBox
+if(lblX<6)lblX=6;
+s+='<rect x="'+(lblX+1)+'" y="'+(lblY+1)+'" width="'+lblW+'" height="'+lblH+'" rx="3" fill="#000000" opacity="0.2"/>';
+s+='<rect x="'+lblX+'" y="'+lblY+'" width="'+lblW+'" height="'+lblH+'" rx="3" fill="url(#'+c.grad+')" stroke="#000000" stroke-width="0.8"/>';
+s+='<text x="'+(lblX+lblW/2)+'" y="'+(branchEndY-3)+'" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="800" letter-spacing="0.3">'+c.n+'</text>';
+s+='<text x="'+(lblX+lblW/2)+'" y="'+(branchEndY+7)+'" text-anchor="middle" fill="#ffffff" font-size="6.5" font-weight="600" opacity="0.95">('+c.sub+')</text>';
 
-// Sub-cause ribs - properly spaced
+// Ribs
 var n=c.items.length;
 for(var j=0;j<n;j++){
-var rat=0.30+(j*(0.50/Math.max(n-1,1)));
+var rat=0.32+(j*(0.48/Math.max(n-1,1)));
 if(n===1)rat=0.50;
 var rx=attachX+(branchEndX-attachX)*rat;
 var ry=attachY+(branchEndY-attachY)*rat;
-// Horizontal rib with rounded cap
-var ribLen=78;
+var ribLen=55;
 var ribEndX=rx+ribLen;
 var ribEndY=ry;
-s+='<line x1="'+rx+'" y1="'+ry+'" x2="'+ribEndX+'" y2="'+ribEndY+'" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>';
-// Bullet circle at branch
-s+='<circle cx="'+rx+'" cy="'+ry+'" r="3" fill="#0ea5e9" stroke="#075985" stroke-width="1.2"/>';
-// End cap on rib
-s+='<circle cx="'+ribEndX+'" cy="'+ribEndY+'" r="1.5" fill="#475569"/>';
-// Item text
-var txtY=c.top?ry-5:ry+11;
-s+='<text x="'+(rx+8)+'" y="'+txtY+'" fill="#1e293b" font-size="9.5" font-weight="600">'+c.items[j]+'</text>';
+s+='<line x1="'+ribEndX+'" y1="'+ribEndY+'" x2="'+(rx+3)+'" y2="'+ry+'" stroke="'+c.color+'" stroke-width="1.5" stroke-linecap="round" opacity="0.75"/>';
+s+='<circle cx="'+rx+'" cy="'+ry+'" r="3" fill="'+c.color+'" stroke="#ffffff" stroke-width="1.2"/>';
+s+='<circle cx="'+rx+'" cy="'+ry+'" r="1.2" fill="#ffffff"/>';
+s+='<rect x="'+(ribEndX-1.5)+'" y="'+(ribEndY-1.5)+'" width="3" height="3" fill="'+c.color+'" transform="rotate(45 '+ribEndX+' '+ribEndY+')"/>';
+var txtY=c.top?ry-4:ry+9;
+s+='<text x="'+(rx+7)+'" y="'+txtY+'" fill="#0f172a" font-size="8" font-weight="700">'+c.items[j]+'</text>';
 }
 }
 
-// Footer caption
-s+='<text x="'+(W/2)+'" y="'+(H-12)+'" text-anchor="middle" fill="#64748b" font-size="8" font-style="italic">4M Analysis Framework &middot; Manpower &middot; Method &middot; Material &middot; Environment</text>';
+// Legend
+var legY=H-8;
+s+='<text x="10" y="'+legY+'" fill="#1e40af" font-size="6.5" font-weight="700">\u25CF People</text>';
+s+='<text x="70" y="'+legY+'" fill="#065f46" font-size="6.5" font-weight="700">\u25CF Process</text>';
+s+='<text x="135" y="'+legY+'" fill="#b45309" font-size="6.5" font-weight="700">\u25CF Equipment</text>';
+s+='<text x="210" y="'+legY+'" fill="#5b21b6" font-size="6.5" font-weight="700">\u25CF Workplace</text>';
+s+='<text x="'+(W-10)+'" y="'+legY+'" text-anchor="end" fill="#64748b" font-size="6.5" font-style="italic">4M Framework</text>';
 
 s+='</svg>';
 return s;
@@ -405,25 +418,25 @@ h+='<tr><td>Reached Patient</td><td>'+V("erR")+'</td><td>Location</td><td>'+ward
 h+='<tr><td>Diagnosis</td><td colspan="3">'+cc+'</td></tr>';
 h+='<tr><td>Ownership</td><td>'+V("own")+'</td><td>Severity (NCC MERP)</td><td><b>'+sv.l+'</b></td></tr></table>';
 
-h+='<h2>SECTION 1 · EVENT DESCRIPTION</h2>';
+h+='<div class="section"><h2>SECTION 1 · EVENT DESCRIPTION</h2>';
 h+='<div class="row"><b>Event Description</b><span>'+ev+'</span></div>';
 h+='<div class="row"><b>Date / Time / Shift</b><span>'+fD(V("iD"))+', '+(V("iT")||"N/A")+'H, '+V("sh")+' shift</span></div>';
 h+='<div class="row"><b>Location (SPSC)</b><span>'+ward+'</span></div>';
 h+='<div class="row"><b>Personnel Involved</b><span>'+ward+' Physician, Pharmacy, Nursing staff</span></div>';
 h+='<div class="row"><b>Reporting Channel</b><span>OVR system + SPSC portal per MOH/MSPP/0007/01</span></div>';
 
-h+='<h2>SECTION 2 · CAUSAL FACTORS ANALYSIS</h2>';
+h+='</div><div class="section"><h2>SECTION 2 · CAUSAL FACTORS ANALYSIS</h2>';
 h+='<div class="row"><b>Contributing Factors</b><span>(1) Knowledge deficit re: '+t.l.toLowerCase()+' and CBAHI '+t.c+'; (2) Cognitive overload from high patient volume; (3) Communication barriers; (4) Behavioral normalization of deviations; (5) System pressure creating time constraints</span></div>';
 h+='<div class="row"><b>Training Adequacy</b><span>'+t.l+' prevention not embedded in current CME framework</span></div>';
 h+='<div class="row"><b>Competence Gap</b><span>Identified in '+t.l.toLowerCase()+' prevention competencies</span></div>';
 h+='<div class="row"><b>Communication</b><span>SBAR not consistently used between disciplines</span></div>';
 
-h+='<h2>SECTION 3 · PROCESS &amp; SYSTEMS REVIEW</h2>';
+h+='</div><div class="section"><h2>SECTION 3 · PROCESS &amp; SYSTEMS REVIEW</h2>';
 h+='<div class="row"><b>Process Failure</b><span>Critical failure identified at the '+stage.toLowerCase()+' step. Defense-in-depth approach (Swiss Cheese Model) recommended</span></div>';
 h+='<div class="row"><b>Technology Gap</b><span>Absence of CPOE, BCMA, and eMAR systems. Strategic technology investment recommended</span></div>';
 h+='<div class="row"><b>Policy Compliance</b><span>CBAHI standard '+t.c+' exists; implementation gap identified; no systematic audit program in place</span></div>';
 
-h+='<h2>SECTION 4 &middot; FIVE WHYS ANALYSIS</h2>';
+h+='</div><div class="section"><h2>SECTION 4 &middot; FIVE WHYS ANALYSIS</h2>';
 h+='<table><tr><th style="width:60px">Level</th><th>Question</th><th>Finding</th></tr>';
 h+='<tr><td style="text-align:center"><b>Why 1</b></td><td>Why did the error occur?</td><td>'+t.d+' due to failure in standard verification process</td></tr>';
 h+='<tr><td style="text-align:center"><b>Why 2</b></td><td>Why did the verification process fail?</td><td>Inadequate safeguards and reliance on individual vigilance</td></tr>';
@@ -432,7 +445,7 @@ h+='<tr><td style="text-align:center"><b>Why 4</b></td><td>Why does this system 
 h+='<tr><td style="text-align:center"><b>Why 5</b></td><td>Why has the gap not been addressed?</td><td>Competing priorities, resource constraints, and absence of governance oversight for this specific risk</td></tr>';
 h+='</table>';
 
-h+='<h2>SECTION 5 &middot; RISK ASSESSMENT MATRIX</h2>';
+h+='</div><div class="section"><h2>SECTION 5 &middot; RISK ASSESSMENT MATRIX</h2>';
 var sevScore=parseInt(V("sev"))+1;
 var likelihood="Occasional";
 var riskLevel="MEDIUM";
@@ -448,20 +461,20 @@ h+='<td style="text-align:center">Moderate<br><span style="font-size:7.5pt;color
 h+='<td style="text-align:center;background:'+riskColor+';color:#fff"><b>'+riskLevel+'</b></td>';
 h+='<td style="text-align:center"><b>P'+(sevScore>=5?"1":(sevScore>=3?"2":"3"))+'</b></td></tr></table>';
 
-h+='<h2>SECTION 6 &middot; FORMAL RECOMMENDATIONS</h2>';
+h+='</div><div class="section"><h2>SECTION 6 &middot; FORMAL RECOMMENDATIONS</h2>';
 h+='<table><tr><th style="width:30px">#</th><th style="width:90px">Category</th><th>Recommendation</th><th style="width:70px">Timeline</th></tr>';
 h+='<tr><td style="text-align:center">1</td><td><b>Education</b></td><td>Mandatory CME training on <b>'+t.l+'</b> prevention. Coverage of CBAHI '+t.c+' standards. Documented competency verification required.</td><td style="text-align:center">14 days</td></tr>';
 h+='<tr><td style="text-align:center">2</td><td><b>Process</b></td><td>Redesign '+stage.toLowerCase()+' workflow with mandatory verification checkpoints. Evaluate CPOE/BCMA deployment.</td><td style="text-align:center">30 days</td></tr>';
 h+='<tr><td style="text-align:center">3</td><td><b>Governance</b></td><td>Monthly medication safety dashboard reported to PT&amp;C committee with KPIs for '+t.l.toLowerCase()+' rates and CAPA compliance.</td><td style="text-align:center">30 days</td></tr>';
 h+='<tr><td style="text-align:center">4</td><td><b>Culture</b></td><td>Non-punitive reporting reinforcement. Monthly safety huddles in '+ward+'. Patient engagement initiatives.</td><td style="text-align:center">60 days</td></tr></table>';
 
-h+='<h2>SECTION 7 &middot; ROOT CAUSE &amp; ACTION PLAN</h2>';
+h+='</div><div class="section"><h2>SECTION 7 &middot; ROOT CAUSE &amp; ACTION PLAN</h2>';
 h+='<table><tr><th style="width:35%">Root Cause</th><th>Risk Reduction Strategy</th><th style="width:18%">Responsible</th><th style="width:18%">Target Date</th></tr>';
 h+='<tr><td rowspan="3"><b>'+t.r+'</b></td><td>1. Mandatory education with documented competency verification</td><td rowspan="3" style="text-align:center">'+resp+'</td><td rowspan="3" style="text-align:center"><b>'+fD(V("dC"))+'</b></td></tr>';
 h+='<tr><td>2. Workflow redesign with verification checkpoints (30 days)</td></tr>';
 h+='<tr><td>3. Monthly compliance audit program (first audit at 60 days)</td></tr></table>';
 
-h+='<h2>SECTION 8 &middot; NCC MERP SEVERITY CLASSIFICATION</h2>';
+h+='</div><div class="section"><h2>SECTION 8 &middot; NCC MERP SEVERITY CLASSIFICATION</h2>';
 h+='<div class="sev-box"><div class="label">'+sv.l+' &mdash; '+sv.d+'</div><div class="just"><b>Justification:</b> '+sv.j+'</div></div>';
 
 // Collect selected CAPA options
@@ -469,11 +482,21 @@ var selectedCapa=[];
 var capaChecks=document.querySelectorAll("#capaList input[type=checkbox]");
 for(var ci=0;ci<capaChecks.length;ci++){
 if(capaChecks[ci].checked){
+if(capaChecks[ci].value==="other"){
+var otherText=document.getElementById("capaOtherText").value.trim();
+if(otherText){
+var lines=otherText.split(/\n+/);
+for(var li=0;li<lines.length;li++){
+if(lines[li].trim())selectedCapa.push(lines[li].trim());
+}
+}
+}else{
 selectedCapa.push(CAPA_MAP[capaChecks[ci].value]);
 }
 }
+}
 
-h+='<h2>SECTION 9 &middot; CORRECTIVE ACTION PLAN (CAPA)</h2>';
+h+='</div><div class="section"><h2>SECTION 9 &middot; CORRECTIVE ACTION PLAN (CAPA)</h2>';
 if(selectedCapa.length>0){
 h+='<table><tr><th style="width:30px">#</th><th>Corrective Action</th><th style="width:90px">Responsible</th><th style="width:80px">Timeline</th></tr>';
 for(var ca=0;ca<selectedCapa.length;ca++){
@@ -489,12 +512,11 @@ h+='</table>';
 h+='<div class="cap-box"><b>Immediate (72 hours):</b> Distribute formal memorandum. Complete SPSC portal reporting.<br><br><b>Short-term (14 days):</b> Mandatory CME with competency verification.<br><br><b>Medium-term (30 days):</b> Implementation of redesigned workflow.<br><br><b>Sustained:</b> Monthly compliance audits, quarterly PT&amp;C reporting.</div>';
 }
 
-h+='<div class="fishbone-page">';
+h+='</div><div class="section fishbone-page">';
 h+='<h2>SECTION 10 &middot; ISHIKAWA FISHBONE DIAGRAM</h2>';
 h+='<div class="fishbone">'+buildFishbone(t)+'</div>';
-h+='</div>';
 
-h+='<h2>SECTION 11 &middot; LESSONS LEARNED &amp; FOLLOW-UP</h2>';
+h+='</div><div class="section"><h2>SECTION 11 &middot; LESSONS LEARNED &amp; FOLLOW-UP</h2>';
 h+='<div class="row"><b>Key Lesson</b><span>This incident highlights the critical importance of defense-in-depth strategies in medication safety. A single point of failure at the '+stage.toLowerCase()+' stage had the potential to compromise patient safety, emphasizing the need for multiple verification layers.</span></div>';
 h+='<div class="row"><b>System Insight</b><span>The absence of automated safeguards ('+t.ft.join(", ")+') created conditions where human error could propagate through the medication use process without interception.</span></div>';
 h+='<div class="row"><b>Cultural Factor</b><span>Non-punitive reporting culture must be reinforced to ensure continued incident disclosure and organizational learning. Staff should view this RCA as an opportunity for system improvement, not individual blame.</span></div>';
@@ -502,12 +524,12 @@ h+='<div class="row"><b>Institutional Learning</b><span>Findings will be dissemi
 h+='<div class="row"><b>Follow-up Review</b><span>A follow-up effectiveness review will be conducted 90 days after CAPA implementation to assess sustainability and measure outcome indicators.</span></div>';
 h+='<div class="row"><b>Effectiveness Measures</b><span>(1) Repeat incident rate; (2) Staff competency scores; (3) Audit compliance rate; (4) Time to CAPA completion; (5) Staff safety culture survey results.</span></div>';
 
-h+='<h2>SECTION 12 &middot; AUTHORIZATION &amp; SIGNATURES</h2>';
+h+='</div><div class="section"><h2>SECTION 12 &middot; AUTHORIZATION &amp; SIGNATURES</h2>';
 h+='<table class="sig-tbl"><tr><td><b>Prepared by</b><div class="name">'+(V("s1")||"___________")+'</div><div class="role">'+(V("s1r")||"Title")+'</div></td><td><b>Reviewed by</b><div class="name">'+(V("s2")||"___________")+'</div><div class="role">Pharmacy Manager</div></td></tr>';
 h+='<tr><td><b>Quality Coordinator</b><div class="name">'+(V("s3")||"___________")+'</div><div class="role">Quality Management</div></td><td><b>Director, QM</b><div class="name">'+(V("s4")||"___________")+'</div><div class="role">Quality Director</div></td></tr>';
 h+='<tr><td colspan="2" style="text-align:center;background:#f8fafc"><b>Approved by</b><div class="name" style="font-size:11pt">'+(V("s5")||"___________")+'</div><div class="role">Medical Director &amp; Chairman, Pharmacy &amp; Therapeutics Committee</div></td></tr></table>';
 
-h+='<div class="footer">'+hosp+' &middot; Aseer Health Cluster &middot; Medication Safety Program &middot; CONFIDENTIAL DOCUMENT &middot; Generated '+fD(V("dC"))+'</div>';
+h+='</div><div class="footer">'+hosp+' &middot; Aseer Health Cluster &middot; Medication Safety Program &middot; CONFIDENTIAL DOCUMENT &middot; Generated '+fD(V("dC"))+'</div>';
 h+='</div>';
 
 document.getElementById("reportBody").innerHTML=h;
@@ -526,12 +548,12 @@ btn.disabled=true;
 var element=document.getElementById("reportBody");
 var mrn=document.getElementById("mrn").value.trim()||"report";
 var opt={
-margin:[10,8,10,8],
+margin:[12,10,12,10],
 filename:"RCA_"+mrn+".pdf",
 image:{type:"jpeg",quality:0.98},
-html2canvas:{scale:2,useCORS:true,letterRendering:true,scrollY:0,windowWidth:800,allowTaint:true,backgroundColor:"#ffffff"},
+html2canvas:{scale:2,useCORS:true,letterRendering:true,scrollY:0,windowWidth:794,allowTaint:true,backgroundColor:"#ffffff"},
 jsPDF:{unit:"mm",format:"a4",orientation:"portrait",compress:true},
-pagebreak:{mode:["css","legacy"],before:".fishbone-page",avoid:[".fishbone",".sev-box",".cap-box","tr"]}
+pagebreak:{mode:["css","legacy"],before:".section",avoid:["table","tr",".fishbone",".sev-box",".cap-box",".row"]}
 };
 html2pdf().set(opt).from(element).save().then(function(){
 btn.textContent="✓ Downloaded!";
@@ -548,6 +570,9 @@ document.getElementById("form").style.display="block";
 });
 document.getElementById("hosp").addEventListener("change",function(){
 document.getElementById("hospOR").style.display=this.value==="other"?"block":"none";
+});
+document.getElementById("capaOtherChk").addEventListener("change",function(){
+document.getElementById("capaOtherText").style.display=this.checked?"block":"none";
 });
 
 var now=new Date();
