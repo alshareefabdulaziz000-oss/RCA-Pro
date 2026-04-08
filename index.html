@@ -69,8 +69,8 @@ textarea{min-height:50px}
 
 .doc .cap-box{background:#fefce8;border-left:4px solid #ca8a04;padding:8px 12px;margin:6px 0;font-size:8.5pt}
 
-.doc .fishbone{margin:10px 0;background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:10px}
-.doc .fishbone svg{width:100%;height:auto;display:block}
+.doc .fishbone{margin:10px 0;background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:8px;text-align:center;page-break-inside:avoid;break-inside:avoid}
+.doc .fishbone svg{max-width:100%;height:auto;display:inline-block}
 
 .doc .sig-tbl td{padding:14px 8px;font-size:8.5pt;height:50px}
 .doc .sig-tbl td b{display:block;font-size:8pt;color:#0c4a6e;margin-bottom:8px}
@@ -261,88 +261,87 @@ function V(id){return document.getElementById(id).value.trim()}
 function fD(d){if(!d)return"";var x=new Date(d);var m=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return m[x.getMonth()]+" "+x.getDate()+", "+x.getFullYear()}
 
 function buildFishbone(t){
-// Clean professional fishbone diagram
-var W=1000,H=460;
+// A4-friendly fishbone: 700x340 fits within page width with margins
+var W=700,H=360;
 var cy=H/2;
-var pad=30;
-var headW=160,headH=90;
+var pad=15;
+var headW=130,headH=70;
 var headX=W-headW-pad;
-var spineStart=pad+20;
-var spineEnd=headX-5;
+var spineStart=pad+10;
+var spineEnd=headX-3;
 
-var s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" font-family="Arial,Helvetica,sans-serif">';
+var s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" font-family="Arial,Helvetica,sans-serif" style="width:100%;height:auto;max-width:700px;display:block;margin:0 auto">';
 
-// Clean white background
+// White background
 s+='<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>';
 
-// Subtle guide frame
-s+='<rect x="4" y="4" width="'+(W-8)+'" height="'+(H-8)+'" fill="none" stroke="#e2e8f0" stroke-width="1" rx="4"/>';
+// Subtle border frame
+s+='<rect x="2" y="2" width="'+(W-4)+'" height="'+(H-4)+'" fill="none" stroke="#cbd5e1" stroke-width="1" rx="4"/>';
 
-// Main spine
-s+='<line x1="'+spineStart+'" y1="'+cy+'" x2="'+spineEnd+'" y2="'+cy+'" stroke="#0c4a6e" stroke-width="4"/>';
-// Spine arrow head
-s+='<polygon points="'+spineEnd+','+(cy-10)+' '+spineEnd+','+(cy+10)+' '+(spineEnd+12)+','+cy+'" fill="#0c4a6e"/>';
+// Title at top
+s+='<text x="'+(W/2)+'" y="18" text-anchor="middle" fill="#0c4a6e" font-size="11" font-weight="700">Cause &amp; Effect Analysis &mdash; 4M Framework</text>';
 
-// Problem head box
-s+='<rect x="'+headX+'" y="'+(cy-headH/2)+'" width="'+headW+'" height="'+headH+'" rx="8" fill="#dc2626" stroke="#7f1d1d" stroke-width="2"/>';
-s+='<text x="'+(headX+headW/2)+'" y="'+(cy-15)+'" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="700">MEDICATION</text>';
-s+='<text x="'+(headX+headW/2)+'" y="'+(cy+3)+'" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="700">ERROR</text>';
-s+='<line x1="'+(headX+20)+'" y1="'+(cy+10)+'" x2="'+(headX+headW-20)+'" y2="'+(cy+10)+'" stroke="#fecaca" stroke-width="1"/>';
-s+='<text x="'+(headX+headW/2)+'" y="'+(cy+25)+'" text-anchor="middle" fill="#fecaca" font-size="9.5" font-style="italic">'+t.l+'</text>';
+// Main spine (horizontal arrow)
+s+='<line x1="'+spineStart+'" y1="'+cy+'" x2="'+spineEnd+'" y2="'+cy+'" stroke="#0c4a6e" stroke-width="4" stroke-linecap="round"/>';
+// Arrow head
+s+='<polygon points="'+spineEnd+','+(cy-9)+' '+spineEnd+','+(cy+9)+' '+(spineEnd+10)+','+cy+'" fill="#0c4a6e"/>';
 
-// 4 categories evenly distributed along spine
-// Branches go diagonally from spine upward/downward
+// Problem head box (right side)
+s+='<rect x="'+headX+'" y="'+(cy-headH/2)+'" width="'+headW+'" height="'+headH+'" rx="6" fill="#dc2626" stroke="#7f1d1d" stroke-width="2"/>';
+s+='<text x="'+(headX+headW/2)+'" y="'+(cy-12)+'" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="700">MEDICATION</text>';
+s+='<text x="'+(headX+headW/2)+'" y="'+(cy+3)+'" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="700">ERROR</text>';
+s+='<line x1="'+(headX+15)+'" y1="'+(cy+8)+'" x2="'+(headX+headW-15)+'" y2="'+(cy+8)+'" stroke="#fecaca" stroke-width="0.8"/>';
+s+='<text x="'+(headX+headW/2)+'" y="'+(cy+22)+'" text-anchor="middle" fill="#fecaca" font-size="8" font-style="italic">'+t.l+'</text>';
+
+// 4 categories evenly spaced along spine
+// Top branches: MANPOWER (left) and METHOD (right)
+// Bottom branches: MATERIAL (left) and ENVIRONMENT (right)
 var spineLen=spineEnd-spineStart;
 var cats=[
-{n:"MANPOWER",items:t.fh,pos:0.28,top:true},
-{n:"METHOD",items:t.fm,pos:0.60,top:true},
-{n:"MATERIAL",items:t.ft,pos:0.28,top:false},
-{n:"ENVIRONMENT",items:t.fe,pos:0.60,top:false}
+{n:"MANPOWER",items:t.fh,pos:0.30,top:true,fill:"#0c4a6e"},
+{n:"METHOD",items:t.fm,pos:0.62,top:true,fill:"#0c4a6e"},
+{n:"MATERIAL",items:t.ft,pos:0.30,top:false,fill:"#0c4a6e"},
+{n:"ENVIRONMENT",items:t.fe,pos:0.62,top:false,fill:"#0c4a6e"}
 ];
 
 for(var i=0;i<cats.length;i++){
 var c=cats[i];
-// Attachment point on spine
+// Branch joins spine at attachX
 var attachX=spineStart+spineLen*c.pos;
 var attachY=cy;
-// Label position at end of branch
-var labelY=c.top?50:H-50;
-var branchEndX=attachX-120;
+// Branch end
+var labelY=c.top?38:H-38;
+var branchEndX=attachX-90;
 var branchEndY=labelY;
 
-// Main diagonal branch
+// Diagonal branch line
 s+='<line x1="'+attachX+'" y1="'+attachY+'" x2="'+branchEndX+'" y2="'+branchEndY+'" stroke="#0c4a6e" stroke-width="2.5" stroke-linecap="round"/>';
 
 // Category label box
-var lblW=130,lblH=28;
+var lblW=100,lblH=22;
 var lblX=branchEndX-lblW;
 var lblY=branchEndY-lblH/2;
-s+='<rect x="'+lblX+'" y="'+lblY+'" width="'+lblW+'" height="'+lblH+'" rx="4" fill="#0c4a6e"/>';
-s+='<text x="'+(lblX+lblW/2)+'" y="'+(branchEndY+5)+'" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="700" letter-spacing="1">'+c.n+'</text>';
+s+='<rect x="'+lblX+'" y="'+lblY+'" width="'+lblW+'" height="'+lblH+'" rx="3" fill="'+c.fill+'"/>';
+s+='<text x="'+(lblX+lblW/2)+'" y="'+(branchEndY+4)+'" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="700">'+c.n+'</text>';
 
-// Sub-cause ribs - parallel lines off the diagonal
+// Sub-cause ribs
 var n=c.items.length;
 for(var j=0;j<n;j++){
 var rat=(j+1)/(n+1);
-// Point on the diagonal branch
 var rx=attachX+(branchEndX-attachX)*rat;
 var ry=attachY+(branchEndY-attachY)*rat;
-// Horizontal rib going toward the spine direction
-var ribLen=90;
+// Horizontal rib
+var ribLen=70;
 var ribEndX=rx+ribLen;
 var ribEndY=ry;
-// Rib line
-s+='<line x1="'+rx+'" y1="'+ry+'" x2="'+ribEndX+'" y2="'+ribEndY+'" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>';
+s+='<line x1="'+rx+'" y1="'+ry+'" x2="'+ribEndX+'" y2="'+ribEndY+'" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>';
 // Bullet at start
-s+='<circle cx="'+rx+'" cy="'+ry+'" r="3" fill="#0ea5e9" stroke="#0c4a6e" stroke-width="1"/>';
-// Label above or below
-var txtY=c.top?ry-5:ry+11;
-s+='<text x="'+(rx+8)+'" y="'+txtY+'" fill="#1e293b" font-size="10" font-weight="500">'+c.items[j]+'</text>';
+s+='<circle cx="'+rx+'" cy="'+ry+'" r="2.5" fill="#0ea5e9" stroke="#0c4a6e" stroke-width="0.8"/>';
+// Label text
+var txtY=c.top?ry-4:ry+10;
+s+='<text x="'+(rx+6)+'" y="'+txtY+'" fill="#1e293b" font-size="9" font-weight="500">'+c.items[j]+'</text>';
 }
 }
-
-// Legend/title at bottom
-s+='<text x="'+(W/2)+'" y="'+(H-10)+'" text-anchor="middle" fill="#64748b" font-size="8" font-style="italic">Ishikawa Cause-and-Effect Diagram · 4M Analysis Framework</text>';
 
 s+='</svg>';
 return s;
@@ -509,12 +508,12 @@ btn.disabled=true;
 var element=document.getElementById("reportBody");
 var mrn=document.getElementById("mrn").value.trim()||"report";
 var opt={
-margin:[10,8,10,8],
+margin:[8,6,8,6],
 filename:"RCA_"+mrn+".pdf",
-image:{type:"jpeg",quality:0.95},
-html2canvas:{scale:2,useCORS:true,letterRendering:true,scrollY:0},
+image:{type:"jpeg",quality:0.98},
+html2canvas:{scale:2,useCORS:true,letterRendering:true,scrollY:0,windowWidth:800,allowTaint:true,backgroundColor:"#ffffff"},
 jsPDF:{unit:"mm",format:"a4",orientation:"portrait",compress:true},
-pagebreak:{mode:["avoid-all","css","legacy"]}
+pagebreak:{mode:["css","legacy"],avoid:[".fishbone","table","h2","h3",".sev-box",".cap-box"]}
 };
 html2pdf().set(opt).from(element).save().then(function(){
 btn.textContent="✓ Downloaded!";
